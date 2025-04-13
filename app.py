@@ -52,7 +52,7 @@ def add_user():
         image_filename = f"users/{image.filename}"
         try:
             s3_client.upload_fileobj(image, S3_BUCKET, image_filename)
-            image_url = f"https://{S3_BUCKET}.s3-{AWS_REGION}.amazonaws.com/{image_filename}"
+            image_url = f"https://{S3_BUCKET}.s3.{AWS_REGION}.amazonaws.com/{image_filename}"
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
@@ -77,6 +77,7 @@ def add_user():
 @app.route("/users/<int:user_id>/delete", methods=["DELETE"])
 def delete_user(user_id):
     response = requests.delete(f"{API_URL}/{user_id}")
+    print(response)
 
     if response.status_code == 204:
         return jsonify({"message": "User deleted successfully"}), 200
@@ -95,6 +96,7 @@ def get_user(user_id):
 def update_user(user_id):
     data = request.json
     response = requests.put(f"{API_URL}/{user_id}", json=data)
+    print(response)
 
     if response.status_code == 200:
         return jsonify({"message": "Used sudah diupdate", "data": response.json()})
