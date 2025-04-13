@@ -23,16 +23,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Create .env file
-        run: |
-          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
-          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
-          echo "AWS_SESSION_TOKEN=${{ secrets.AWS_SESSION_TOKEN }}" >> .env
-          echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
-          echo "EFS_PATH=${{ secrets.EFS_PATH }}" >> .env
-          echo "S3_BUCKET_NAME=${{ secrets.S3_IMAGE_BUCKET }}" >> .env
-          echo "API_GATEWAY_URL=${{ secrets.API_GATEWAY_URL }}" >> .env
-
   build_and_push_ecr:
     needs: install
     runs-on: ubuntu-latest
@@ -59,7 +49,15 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build \
+            --build-arg AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            --build-arg AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            --build-arg AWS_SESSION_TOKEN=${{ secrets.AWS_SESSION_TOKEN }} \
+            --build-arg AWS_REGION=${{ secrets.AWS_REGION }} \
+            --build-arg EFS_PATH=${{ secrets.EFS_PATH }} \
+            --build-arg S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }} \
+            --build-arg API_GATEWAY_URL=${{ secrets.API_GATEWAY_URL }} \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
