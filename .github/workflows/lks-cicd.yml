@@ -13,23 +13,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Create .env file
-        run: |
-          cat <<EOF > .env
-          AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN=${{ secrets.AWS_SESSION_TOKEN }}
-          S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }}
-          API_GATEWAY_URL=${{ secrets.API_GATEWAY_URL }}
-          EFS_PATH=${{ secrets.EFS_PATH }}
-          AWS_REGION=${{ secrets.AWS_REGION }}
-          EOF
+      # - name: Create .env file
+      #   run: |
+      #     cat <<EOF > .env
+      #     AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_SESSION_TOKEN=${{ secrets.AWS_SESSION_TOKEN }}
+      #     S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }}
+      #     API_GATEWAY_URL=${{ secrets.API_GATEWAY_URL }}
+      #     EFS_PATH=${{ secrets.EFS_PATH }}
+      #     AWS_REGION=${{ secrets.AWS_REGION }}
+      #     EOF
 
-      - name: Upload .env as artifact
-        uses: actions/upload-artifact@v3
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v1
         with:
-          name: env-file
-          path: .env
+          envkey_DEBUG: false
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          S3_BUCKET_NAME: ${{ secrets.S3_IMAGE_BUCKET }}
+          API_GATEWAY_URL: ${{ secrets.API_GATEWAY_URL }}
+          EFS_PATH: ${{ secrets.EFS_PATH }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          file_name: .env
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -46,15 +53,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Upload .env as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: env-file
-          path: .env
-
-      - name: Show .env for debug
-        run: cat .env
-
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -86,15 +84,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Upload .env as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: env-file
-          path: .env
-
-      - name: Show .env for debug
-        run: cat .env
-
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -116,15 +105,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Upload .env as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: env-file
-          path: .env
-
-      - name: Show .env for debug
-        run: cat .env
-        
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
