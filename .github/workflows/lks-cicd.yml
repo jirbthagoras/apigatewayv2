@@ -15,15 +15,15 @@ jobs:
 
       - name: Create .env file
         run: |
-          sudo touch .env
-          sudo echo AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} > .env
-          sudo echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} > .env
-          sudo echo AWS_SESSION_TOKEN=${{ secrets.AWS_SESSION_TOKEN }} > .env
-          sudo echo S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }} > .env
-          sudo echo API_GATEWAY_URL=${{ secrets.API_GATEWAY_URL }} > .env
-          sudo echo EFS_PATH=${{ secrets.EFS_PATH }} > .env
-          sudo echo AWS_REGION=jembot > .env
-          sudo cat .env
+          cat <<EOF > .env
+          AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN=${{ secrets.AWS_SESSION_TOKEN }}
+          S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }}
+          API_GATEWAY_URL=${{ secrets.API_GATEWAY_URL }}
+          EFS_PATH=${{ secrets.EFS_PATH }}
+          AWS_REGION=${{ secrets.AWS_REGION }}
+          EOF
 
       - name: Set up Python
         uses: actions/setup-python@v4
