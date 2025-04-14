@@ -81,7 +81,7 @@ jobs:
           AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_SESSION_TOKEN=${{ secrets.AWS_SESSION_TOKEN }}
-          S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }}
+          S3_BUCKET_NAME=${{ secrets.S3_IMAGE_BUCKET }}
           API_GATEWAY_URL=${{ secrets.API_GATEWAY_URL }}
           EFS_PATH=${{ secrets.EFS_PATH }}
           AWS_REGION=${{ secrets.AWS_REGION }}
@@ -97,9 +97,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-          IMAGE_TAG: ${{ github.sha }}
         run: |
-          aws s3 cp flask-app.zip s3://${{ secrets.S3_BUCKET_NAME }}/flask-app-$IMAGE_TAG.zip
+          aws s3 cp flask-app.zip s3://${{ secrets.S3_BUCKET_NAME }}/flask-app.zip
 
   deploy:
     needs: upload_to_s3
